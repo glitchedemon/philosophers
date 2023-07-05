@@ -31,6 +31,8 @@ typedef struct s_monitor
 	t_philo			*philo;
 	pthread_mutex_t	check_mutex;
 	pthread_mutex_t	*fork;
+	pthread_mutex_t print;
+	pthread_mutex_t death;
 	int				the_end;
 }	t_monitor;
 
@@ -39,11 +41,20 @@ typedef struct s_philo
 	int				id;
 	int				eaten_meals;
 	int				time_start;
-	t_monitor		*monitor;
-	int				r_fork;
-	int				l_fork;
+	int				n_philo;
+	int				time_to_die;
+	int				time_to_sleep;
+	int				time_to_eat;
+	int				full_philo;
+	t_monitor		*monitor; //only to access the_end
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t *print;
+	pthread_mutex_t *death;
 
 }	t_philo;
+
+
 
 int	main(int argc, char **argv);
 

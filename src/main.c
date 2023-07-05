@@ -14,4 +14,12 @@
 
 int	main(int argc, char **argv)
 {
+    // init mutex and array of struct
+    // pthreadcreate
+    // routine (while 1)
+    // funzione per la morte tra create e join(ciclo while)
+    // pthreadjoin
+    // mutexdestroy
+    // free mem
+    // usleep 10k per pari o dispari nella routine
 }
