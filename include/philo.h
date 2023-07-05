@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:34:18 by lfai              #+#    #+#             */
-/*   Updated: 2023/06/26 15:26:45 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/05 16:35:16 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,34 +23,33 @@
 typedef struct s_monitor
 {
 	int				n_philo;
-	int				time_to_die;
-	int				time_to_sleep;
-	int				time_to_eat;
-	int				eat_or_die;
+	unsigned long				time_start;
+	unsigned long				time_to_die;
+	unsigned long				time_to_sleep;
+	unsigned long				time_to_eat;
+	/*int				eat_or_die;*/
 	int				full_philo;
-	t_philo			*philo;
-	pthread_mutex_t	check_mutex;
-	pthread_mutex_t	*fork;
-	pthread_mutex_t print;
-	pthread_mutex_t death;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print;
+	pthread_mutex_t	death;
 	int				the_end;
 }	t_monitor;
 
 typedef struct s_philo
 {
-	int				id;
-	int				eaten_meals;
-	int				time_start;
-	int				n_philo;
-	int				time_to_die;
-	int				time_to_sleep;
-	int				time_to_eat;
-	int				full_philo;
-	t_monitor		*monitor; //only to access the_end
+	pthread_t       	th;
+	int			id;
+	int			meals;
+	int			n_philo;
+	unsigned long			time_to_die;
+	unsigned long			time_to_sleep;
+	unsigned long			time_to_eat;
+	int			full_philo;
+	t_monitor	*monitor; //only to access the_end
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
-	pthread_mutex_t *print;
-	pthread_mutex_t *death;
+	pthread_mutex_t	*print;
+	pthread_mutex_t	*death;
 
 }	t_philo;
 
