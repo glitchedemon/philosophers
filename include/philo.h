@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:34:18 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/05 16:35:16 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/10 15:30:06 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,30 +22,37 @@
 
 typedef struct s_monitor
 {
-	int				n_philo;
-	unsigned long				time_start;
-	unsigned long				time_to_die;
-	unsigned long				time_to_sleep;
-	unsigned long				time_to_eat;
-	/*int				eat_or_die;*/
-	int				full_philo;
+	pthread_t	*th;
+	time_t		time_start;
+	suseconds_t	utime_start; //microseconds
+	int		n_philo; //num of philos
+	int		meals;
+	unsigned long	time_start; //time when the simulation starts
+	int		time_to_die;
+	int		time_to_sleep;
+	int		time_to_eat;
+	int		full_philos; // true when all philos have eaten, stops the routine
+	t_philo 	*philo;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print;
 	pthread_mutex_t	death;
-	int				the_end;
+	int		the_end; //true when a philo dies, stops the routine
 }	t_monitor;
 
 typedef struct s_philo
 {
-	pthread_t       	th;
-	int			id;
-	int			meals;
-	int			n_philo;
-	unsigned long			time_to_die;
-	unsigned long			time_to_sleep;
-	unsigned long			time_to_eat;
-	int			full_philo;
-	t_monitor	*monitor; //only to access the_end
+	int		id; //philo's name
+	time_t		time_start;
+	suseconds_t	utime_start;
+	int		meals; //num of meals eaten
+	int		last_meal; // the time when last meal was eaten
+	int		n_philo;
+	int		time_to_die;
+	int		time_to_sleep;
+	int		time_to_eat;
+	int		*full_philos;
+	int		*the_end;
+	t_monitor	*monitor; //access to monitor struct
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*print;
@@ -56,5 +63,7 @@ typedef struct s_philo
 
 
 int	main(int argc, char **argv);
+int	ft_atoi(const char *str);
+
 
 #endif
