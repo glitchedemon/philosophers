@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 12:10:21 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/10 15:32:14 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/10 16:03:21 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,33 @@ void	accurate_sleep(t_philo *ph, int tm)
 	start = actual_time(ph->time_start, ph->utime_start);
 	while (actual_time(ph->time_start, ph->utime_start)- start < time)
 		usleep(50);
+}
+
+void	mutex_printer(t_philo *ph, char c)
+{
+	static int	f;
+
+	pthread_mutex_lock(ph->print);
+	if (f == 0)
+	{
+		if (c == 'f')
+			printf("%d %d grab a fork\n", actual_time(ph->time_start, ph->utime_start),\
+				ph->id);
+		else if (c == 'e')
+			printf("%d %d is eating\n", actual_time(ph->time_start, ph->utime_start),\
+				ph->id);
+		else if (c == 's')
+			printf("%d %d is sleeping\n", actual_time(ph->time_start, ph->utime_start),\
+				ph->id);
+		else if (c == 't')
+			printf("%d %d is thinking\n", actual_time(ph->time_start, ph->utime_start),\
+				ph->id);
+		else if (c == 'd')
+		{
+			printf("%d %d is dead\n", actual_time(ph->time_start, ph->utime_start),\
+				ph->id);
+			f = 1;
+		}
+	}
+	pthread_mutex_unlock(ph->print);
 }

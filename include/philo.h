@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:34:18 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/10 15:30:06 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/10 16:13:44 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,13 @@ typedef struct s_philo
 
 int	main(int argc, char **argv);
 int	ft_atoi(const char *str);
+void	init_thread(t_monitor *monitor);
+int	init_forks(t_monitor *monitor);
+void	init_philos(t_monitor *monitor);
+void	init_monitor(t_monitor *monitor, char **argv, int argc);
+void	mutex_printer(t_philo *ph, char c);
+void	accurate_sleep(t_philo *ph, int tm);
+int	actual_time(time_t start, suseconds_t ustart);
 
 
 #endif
