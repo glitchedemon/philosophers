@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 15:35:32 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/10 16:12:39 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/12 17:12:05 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,11 @@
  * @param argv
  * @param argc
  */
-void	init_monitor(t_monitor *monitor, char **argv, int argc)
+t_monitor	*init_monitor(char **argv)
 {
-	int	i;
+	t_monitor *monitor;
 	struct timeval	tv;
-
-	i = -1;
+	monitor = malloc(sizeof(t_monitor));
 	gettimeofday(&tv, NULL);
 	monitor->time_start = tv.tv_sec;
 	monitor->utime_start = tv.tv_usec;
@@ -31,19 +30,21 @@ void	init_monitor(t_monitor *monitor, char **argv, int argc)
 	monitor->time_to_die = ft_atoi(argv[2]);
 	monitor->time_to_eat = ft_atoi(argv[3]);
 	monitor->time_to_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
+	if (argv[5] != NULL)
 		monitor->meals = ft_atoi(argv[5]);
 	else
-		monitor->meals = -1;
-	monitor->full_philos = monitor->n_philo;
+		monitor->meals = __INT_MAX__;
+	if(monitor->n_philo <= 0 || monitor->time_to_die <= 0 ||
+		monitor->time_to_eat <=0 || monitor->time_to_sleep <= 0 || monitor->meals <= 0)
+		return (NULL);
 	monitor->the_end = 0;
 	monitor->philo = malloc(sizeof(t_philo) * monitor->n_philo);
-	monitor->th = malloc(sizeof(pthread_t) * monitor->n_philo);
 	pthread_mutex_init(&monitor->print, NULL);
 	pthread_mutex_init(&monitor->death, NULL);
+	pthread_mutex_init(&monitor->eat, NULL);
 	monitor->forks = malloc(sizeof(pthread_mutex_t) * monitor->n_philo);
 	init_forks(monitor);
-	return (0);
+	return (monitor);
 }
 
 /*!
@@ -61,18 +62,18 @@ void	init_philos(t_monitor *monitor)
 		monitor->philo[i].id = i + 1;
 		monitor->philo[i].n_philo = monitor->n_philo;
 		monitor->philo[i].meals = monitor->meals;
-		monitor->philo[i].last_meal = actual_time(monitor->time_start, monitor->utime_start);
+		monitor->philo[i].meal_count = 0;
 		monitor->philo[i].time_to_die = monitor->time_to_die;
 		monitor->philo[i].time_to_eat = monitor->time_to_eat;
 		monitor->philo[i].time_to_sleep = monitor->time_to_sleep;
-		monitor->philo[i].the_end = monitor->the_end;
 		monitor->philo[i].time_start = monitor->time_start;
 		monitor->philo[i].utime_start = monitor->utime_start;
+		monitor->philo[i].last_meal = get_time(&monitor->philo[i]);
+		monitor->philo[i].the_end = &monitor->the_end;
 		monitor->philo[i].death = &monitor->death;
 		monitor->philo[i].print = &monitor->print;
-		monitor->philo[i].full_philos = &monitor->full_philos;
 		monitor->philo[i].the_end = &monitor->the_end;
-		init_forks(&monitor->philo[i]);
+		monitor->philo[i].eat = &monitor->eat;
 		i++;
 	}
 }
@@ -97,6 +98,7 @@ int	init_forks(t_monitor *monitor)
 	{
 		monitor->philo[i].l_fork = &monitor->forks[i];
 		monitor->philo[i].r_fork = &monitor->forks[i - 1];
+		i++;
 	}
 	return (0);
 }
@@ -112,14 +114,15 @@ void	init_thread(t_monitor *monitor)
 	i = 0;
 	while (i < monitor->n_philo)
 	{
-		pthread_create(&monitor->th[i], NULL,/*&routine*/ &monitor->philo[i]);
+		pthread_create(&monitor->philo[i].t_id, NULL, &routine, &monitor->philo[i]);
 		i++;
 	}
-	//death_ft
+	the_death(monitor);
+	printf("ciao\n");
 	i = 0;
 	while (i < monitor->n_philo)
 	{
-		pthread_join(monitor->th[i], NULL);
+		pthread_join(monitor->philo[i].t_id, NULL);
 		i++;
 	}
 }

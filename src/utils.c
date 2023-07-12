@@ -6,13 +6,13 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 12:10:21 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/10 16:03:21 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/12 17:11:03 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-int	ft_atoi(const char *str)
+long	ft_atoi(char *str)
 {
 	long			res;
 	long			sign;
@@ -35,23 +35,25 @@ int	ft_atoi(const char *str)
 		res = res * 10 + str[i] - '0';
 		i++;
 	}
-	return ((int)(res * sign));
+	return ((long)(res * sign));
 }
 
-int	actual_time(time_t start, suseconds_t ustart)
+unsigned long	get_time(t_philo *ph)
 {
 	struct timeval	tv;
+	unsigned long	t;
 
 	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec - start) * 1000 + (tv.tv_usec - ustart) / 1000);
+	t = ((tv.tv_sec - ph->time_start) * 1000 + (tv.tv_usec - ph->utime_start) / 1000);
+	return (t);
 }
 
 void	accurate_sleep(t_philo *ph, int tm)
 {
 	int	start;
 
-	start = actual_time(ph->time_start, ph->utime_start);
-	while (actual_time(ph->time_start, ph->utime_start)- start < time)
+	start = get_time(ph);
+	while (get_time(ph)- start < (unsigned long)tm)
 		usleep(50);
 }
 
@@ -63,20 +65,20 @@ void	mutex_printer(t_philo *ph, char c)
 	if (f == 0)
 	{
 		if (c == 'f')
-			printf("%d %d grab a fork\n", actual_time(ph->time_start, ph->utime_start),\
+			printf("%ld %d grab a fork\n", get_time(ph),\
 				ph->id);
 		else if (c == 'e')
-			printf("%d %d is eating\n", actual_time(ph->time_start, ph->utime_start),\
+			printf("%ld %d is eating\n", get_time(ph),\
 				ph->id);
 		else if (c == 's')
-			printf("%d %d is sleeping\n", actual_time(ph->time_start, ph->utime_start),\
+			printf("%ld %d is sleeping\n", get_time(ph),\
 				ph->id);
 		else if (c == 't')
-			printf("%d %d is thinking\n", actual_time(ph->time_start, ph->utime_start),\
+			printf("%ld %d is thinking\n", get_time(ph),\
 				ph->id);
 		else if (c == 'd')
 		{
-			printf("%d %d is dead\n", actual_time(ph->time_start, ph->utime_start),\
+			printf("%ld %d is dead\n", get_time(ph),\
 				ph->id);
 			f = 1;
 		}
