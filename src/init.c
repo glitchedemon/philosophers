@@ -38,12 +38,12 @@ t_monitor	*init_monitor(char **argv)
 		monitor->time_to_eat <=0 || monitor->time_to_sleep <= 0 || monitor->meals <= 0)
 		return (NULL);
 	monitor->the_end = 0;
+	monitor->full_philo = 0;
 	monitor->philo = malloc(sizeof(t_philo) * monitor->n_philo);
 	pthread_mutex_init(&monitor->print, NULL);
 	pthread_mutex_init(&monitor->death, NULL);
 	pthread_mutex_init(&monitor->eat, NULL);
 	monitor->forks = malloc(sizeof(pthread_mutex_t) * monitor->n_philo);
-	init_forks(monitor);
 	return (monitor);
 }
 
@@ -74,6 +74,7 @@ void	init_philos(t_monitor *monitor)
 		monitor->philo[i].print = &monitor->print;
 		monitor->philo[i].the_end = &monitor->the_end;
 		monitor->philo[i].eat = &monitor->eat;
+		monitor->philo[i].full_philo = &monitor->full_philo;
 		i++;
 	}
 }
@@ -87,17 +88,20 @@ int	init_forks(t_monitor *monitor)
 {
 	int	i;
 
-	i = -1;
-	while (++i < monitor->n_philo)
-		pthread_mutex_init(&monitor->forks[i], NULL);
 	i = 0;
-	monitor->philo[0].l_fork = &monitor->forks[0];
-	monitor->philo[0].r_fork = &monitor->forks[monitor->n_philo - 1];
-	i = 1;
 	while (i < monitor->n_philo)
 	{
+		pthread_mutex_init(&monitor->forks[i], NULL);
+		i++;
+	}
+	i = 0;
+	monitor->philo[monitor->n_philo - 1].l_fork = &monitor->forks[0];
+	monitor->philo[monitor->n_philo - 1].r_fork = &monitor->forks[monitor->n_philo - 1];
+	i = 0;
+	while (i < monitor->n_philo - 1)
+	{
 		monitor->philo[i].l_fork = &monitor->forks[i];
-		monitor->philo[i].r_fork = &monitor->forks[i - 1];
+		monitor->philo[i].r_fork = &monitor->forks[i + 1];
 		i++;
 	}
 	return (0);
@@ -114,15 +118,14 @@ void	init_thread(t_monitor *monitor)
 	i = 0;
 	while (i < monitor->n_philo)
 	{
-		pthread_create(&monitor->philo[i].t_id, NULL, &routine, &monitor->philo[i]);
+		pthread_create(&monitor->philo[i].th, NULL, &routine, &monitor->philo[i]);
 		i++;
 	}
 	the_death(monitor);
-	printf("ciao\n");
 	i = 0;
 	while (i < monitor->n_philo)
 	{
-		pthread_join(monitor->philo[i].t_id, NULL);
+		pthread_join(monitor->philo[i].th, NULL);
 		i++;
 	}
 }

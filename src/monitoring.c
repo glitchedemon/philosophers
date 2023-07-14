@@ -15,7 +15,7 @@
 int	check_end(t_philo *ph)
 {
 	pthread_mutex_lock(ph->death);
-	if (*ph->the_end == 0)
+	if (*ph->the_end == 1)
 	{
 		pthread_mutex_unlock(ph->death);
 		return (1);
@@ -32,6 +32,11 @@ void	the_death(t_monitor *monitor)
 	while (1)
 	{
 		pthread_mutex_lock(&monitor->eat);
+		if (monitor->full_philo == monitor->n_philo)
+		{
+			pthread_mutex_unlock(&monitor->eat);
+			return ;
+		}
 		if (get_time(&monitor->philo[i]) - (unsigned long)monitor->philo[i].last_meal > (unsigned long)monitor->philo[i].time_to_die)
 		{
 			pthread_mutex_unlock(&monitor->eat);
@@ -42,13 +47,6 @@ void	the_death(t_monitor *monitor)
 			return ;
 		}
 		pthread_mutex_unlock(&monitor->eat);
-		if (check_full_philos(&monitor->philo[i]) == 0)
-		{
-			pthread_mutex_lock(&monitor->death);
-			monitor->the_end = 1;
-			pthread_mutex_unlock(&monitor->death);
-			return ;
-		}
 		i++;
 		if (i == monitor->n_philo)
 			i = 0;
@@ -62,21 +60,15 @@ void	the_death(t_monitor *monitor)
  */
 int	check_full_philos(t_philo *ph)
 {
-	int	i;
-
-	i = 0;
-	while (i < ph->n_philo)
-	{
 		pthread_mutex_lock(ph->eat);
-		if (ph[i].meal_count < ph[i].meals)
+		if (ph->meals == ph->meal_count)
 		{
+			*ph->full_philo += 1;
 			pthread_mutex_unlock(ph->eat);
 			return (1);
 		}
 		pthread_mutex_unlock(ph->eat);
-		i++;
-	}
-	return (0);
+		return (0);
 }
 
 void	*routine(void *ptr)
@@ -85,7 +77,7 @@ void	*routine(void *ptr)
 
 	ph = (t_philo *)ptr;
 	if (ph->id % 2 == 0)
-		accurate_sleep(ph, ph->time_to_eat / 2);
+		usleep(10000);
 	while (check_end(ph) == 0)
 	{
 		pthread_mutex_lock(ph->l_fork);
@@ -93,11 +85,15 @@ void	*routine(void *ptr)
 		pthread_mutex_lock(ph->r_fork);
 		mutex_printer(ph, 'f');
 		mutex_printer(ph, 'e');
-		accurate_sleep(ph, ph->time_to_eat);
 		pthread_mutex_lock(ph->eat);
 		ph->last_meal = get_time(ph);
 		ph->meal_count++;
 		pthread_mutex_unlock(ph->eat);
+		pthread_mutex_unlock(ph->r_fork);
+		pthread_mutex_unlock(ph->l_fork);
+		accurate_sleep(ph, ph->time_to_eat);
+		if (check_full_philos(ph) == 1)
+			break ;
 		mutex_printer(ph, 's');
 		accurate_sleep(ph, ph->time_to_sleep);
 		mutex_printer(ph, 't');

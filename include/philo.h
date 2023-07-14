@@ -28,6 +28,7 @@ typedef struct s_monitor
 	time_t		time_start;
 	suseconds_t		utime_start;
 	int		n_philo; //num of philos
+	int		full_philo;
 	int		meals;
 	int		time_to_die;
 	int		time_to_sleep;
@@ -42,11 +43,12 @@ typedef struct s_monitor
 typedef struct s_philo
 {
 	int		id; //philo's name
-	pthread_t	t_id;
+	pthread_t	th;
 	time_t		time_start;
 	suseconds_t		utime_start;
 	int		meals; //num of meals eaten
 	int		meal_count;
+	int		*full_philo;
 	int		last_meal; // the time when last meal was eaten
 	int		n_philo;
 	int		time_to_die;
@@ -78,6 +80,8 @@ void	*routine(void *ptr);
 void	the_death(t_monitor *monitor);
 int	check_end(t_philo *ph);
 int	check_full_philos(t_philo *ph);
+void	clear_monitor(t_monitor *monitor);
+void    clear_mutex(t_monitor *monitor);
 
 
 

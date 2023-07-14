@@ -59,7 +59,7 @@ void	accurate_sleep(t_philo *ph, int tm)
 
 void	mutex_printer(t_philo *ph, char c)
 {
-	static int	f;
+	static int	f = 0;
 
 	pthread_mutex_lock(ph->print);
 	if (f == 0)
