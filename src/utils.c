@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 12:10:21 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/12 17:11:03 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/19 15:26:54 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,27 @@ long	ft_atoi(char *str)
 	return ((long)(res * sign));
 }
 
+/*!
+ * @brief ft used to check the present time in ms
+ * @param ph
+ * @return
+ */
 unsigned long	get_time(t_philo *ph)
 {
 	struct timeval	tv;
 	unsigned long	t;
 
 	gettimeofday(&tv, NULL);
-	t = ((tv.tv_sec - ph->time_start) * 1000 + (tv.tv_usec - ph->utime_start) / 1000);
+	t = ((tv.tv_sec - ph->time_start) * 1000 + \
+		(tv.tv_usec - ph->utime_start) / 1000);
 	return (t);
 }
 
+/*!
+ * @brief ft used to make a philo sleep for a specific time in ms
+ * @param ph pointer to s_philo
+ * @param tm time
+ */
 void	accurate_sleep(t_philo *ph, int tm)
 {
 	int	start;
@@ -57,6 +68,12 @@ void	accurate_sleep(t_philo *ph, int tm)
 		usleep(50);
 }
 
+/*!
+ * @brief ft used to print each mutex status
+ * @param ph pointer to s_philo
+ * @param c status
+ * @param f flag
+ */
 void	mutex_printer(t_philo *ph, char c)
 {
 	static int	f = 0;
@@ -65,23 +82,40 @@ void	mutex_printer(t_philo *ph, char c)
 	if (f == 0)
 	{
 		if (c == 'f')
-			printf("%ld %d grab a fork\n", get_time(ph),\
+			printf("%ld %d grab a fork\n", get_time(ph), \
 				ph->id);
 		else if (c == 'e')
-			printf("%ld %d is eating\n", get_time(ph),\
+			printf("%ld %d is eating\n", get_time(ph), \
 				ph->id);
 		else if (c == 's')
-			printf("%ld %d is sleeping\n", get_time(ph),\
+			printf("%ld %d is sleeping\n", get_time(ph), \
 				ph->id);
 		else if (c == 't')
-			printf("%ld %d is thinking\n", get_time(ph),\
+			printf("%ld %d is thinking\n", get_time(ph), \
 				ph->id);
 		else if (c == 'd')
 		{
-			printf("%ld %d is dead\n", get_time(ph),\
+			printf("%ld %d is dead\n", get_time(ph), \
 				ph->id);
 			f = 1;
 		}
 	}
 	pthread_mutex_unlock(ph->print);
+}
+
+/*!
+ * @brief checks the value of the end, return 1 if a philo died
+ * @param ph pointer to s_philo
+ * @return
+ */
+int	check_end(t_philo *ph)
+{
+	pthread_mutex_lock(ph->death);
+	if (*ph->the_end == 1)
+	{
+		pthread_mutex_unlock(ph->death);
+		return (1);
+	}
+	pthread_mutex_unlock(ph->death);
+	return (0);
 }

@@ -6,22 +6,23 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 15:35:32 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/12 17:12:05 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/19 15:53:09 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
 /*!
- * @brief
- * @param monitor
- * @param argv
- * @param argc
+ * @brief init s_monitor struct
+ * @param monitor pointer to s_monitor struct
+ * @param argv arguments given when starting the program
+ * @param argc num of arguments given when starting the program
  */
 t_monitor	*init_monitor(char **argv)
 {
-	t_monitor *monitor;
+	t_monitor		*monitor;
 	struct timeval	tv;
+
 	monitor = malloc(sizeof(t_monitor));
 	gettimeofday(&tv, NULL);
 	monitor->time_start = tv.tv_sec;
@@ -30,12 +31,10 @@ t_monitor	*init_monitor(char **argv)
 	monitor->time_to_die = ft_atoi(argv[2]);
 	monitor->time_to_eat = ft_atoi(argv[3]);
 	monitor->time_to_sleep = ft_atoi(argv[4]);
-	if (argv[5] != NULL)
-		monitor->meals = ft_atoi(argv[5]);
-	else
-		monitor->meals = __INT_MAX__;
-	if(monitor->n_philo <= 0 || monitor->time_to_die <= 0 ||
-		monitor->time_to_eat <=0 || monitor->time_to_sleep <= 0 || monitor->meals <= 0)
+	check_monitor(argv, monitor);
+	if (monitor->n_philo <= 0 || monitor->time_to_die <= 0 || \
+		monitor->time_to_eat <= 0 || monitor->time_to_sleep <= 0 \
+		|| monitor->meals <= 0)
 		return (NULL);
 	monitor->the_end = 0;
 	monitor->full_philo = 0;
@@ -47,9 +46,18 @@ t_monitor	*init_monitor(char **argv)
 	return (monitor);
 }
 
+void	*check_monitor(char **argv, t_monitor *monitor)
+{
+	if (argv[5] != NULL)
+		monitor->meals = ft_atoi(argv[5]);
+	else
+		monitor->meals = __INT_MAX__;
+	return (0);
+}
+
 /*!
- * @brief
- * @param monitor
+ * @brief init s_philo struct
+ * @param monitor pointer to s_monitor
  * @return
  */
 void	init_philos(t_monitor *monitor)
@@ -80,7 +88,8 @@ void	init_philos(t_monitor *monitor)
 }
 
 /*!
- * @brief
+ * @brief ft used to init the forks, each philo has 2 forks,
+ * one at left and one at right which is neighbour's fork
  * @param monitor
  * @return
  */
@@ -96,7 +105,8 @@ int	init_forks(t_monitor *monitor)
 	}
 	i = 0;
 	monitor->philo[monitor->n_philo - 1].l_fork = &monitor->forks[0];
-	monitor->philo[monitor->n_philo - 1].r_fork = &monitor->forks[monitor->n_philo - 1];
+	monitor->philo[monitor->n_philo - 1].r_fork = \
+		&monitor->forks[monitor->n_philo - 1];
 	i = 0;
 	while (i < monitor->n_philo - 1)
 	{
@@ -108,7 +118,9 @@ int	init_forks(t_monitor *monitor)
 }
 
 /*!
- * @brief
+ * @brief ft used to init the thread in order to start the routine.
+ * Death function is in between thread create and join so it won't
+ * bother during the routine
  * @param monitor
  */
 void	init_thread(t_monitor *monitor)
@@ -118,7 +130,8 @@ void	init_thread(t_monitor *monitor)
 	i = 0;
 	while (i < monitor->n_philo)
 	{
-		pthread_create(&monitor->philo[i].th, NULL, &routine, &monitor->philo[i]);
+		pthread_create(&monitor->philo[i].th, NULL, &routine, \
+			&monitor->philo[i]);
 		i++;
 	}
 	the_death(monitor);
