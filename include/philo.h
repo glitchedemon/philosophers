@@ -75,7 +75,7 @@ void	init_philos(t_monitor *monitor);
 t_monitor	*init_monitor(char **argv);
 void	mutex_printer(t_philo *ph, char c);
 void	accurate_sleep(t_philo *ph, int tm);
-unsigned long	get_time(t_philo *ph);
+unsigned long		get_time(t_philo *ph);
 void	*routine(void *ptr);
 void	the_death(t_monitor *monitor);
 int	check_end(t_philo *ph);
