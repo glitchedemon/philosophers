@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 15:27:29 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/19 15:40:33 by lfai             ###   ########.fr       */
+/*   Updated: 2023/07/28 19:19:53 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,11 @@ void	*routine(void *ptr)
 void	routine_helper(t_philo *ph)
 {
 	if (ph->id % 2 == 0)
-		usleep(10000);
+		accurate_sleep(ph, ph->time_to_eat);
+	if (ph->n_philo == 1)
+	{
+		accurate_sleep(ph, ph->time_to_die + 50);
+		return ;
+	}
 }
 
