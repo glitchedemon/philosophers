@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 12:10:21 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/28 19:21:43 by lfai             ###   ########.fr       */
+/*   Updated: 2023/08/07 17:07:38 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ long	ft_atoi(char *str)
  * @param ph
  * @return
  */
-unsigned long	get_time(t_philo *ph)
+unsigned long	ft_get_time(t_philo *ph)
 {
 	struct timeval	tv;
 	unsigned long	t;
@@ -63,59 +63,7 @@ void	accurate_sleep(t_philo *ph, int tm)
 {
 	int	start;
 
-	start = get_time(ph);
-	while (get_time(ph)- start < (unsigned long)tm)
+	start = ft_get_time(ph);
+	while (ft_get_time(ph)- start < (unsigned long)tm)
 		usleep(50);
-}
-
-/*!
- * @brief ft used to print each mutex status
- * @param ph pointer to s_philo
- * @param c status
- * @param f flag
- */
-void	mutex_printer(t_philo *ph, char c)
-{
-	static int	f = 0;
-
-	pthread_mutex_lock(ph->print);
-	if (f == 0)
-	{
-		if (c == 'f')
-			printf("%ld %d grab a fork\n", get_time(ph), \
-				ph->id);
-		else if (c == 'e')
-			printf("%ld %d is eating\n", get_time(ph), \
-				ph->id);
-		else if (c == 's')
-			printf("%ld %d is sleeping\n", get_time(ph), \
-				ph->id);
-		else if (c == 't')
-			printf("%ld %d is thinking\n", get_time(ph), \
-				ph->id);
-		else if (c == 'd')
-		{
-			printf("%ld %d is dead\n", get_time(ph), \
-				ph->id);
-			f = 1;
-		}
-	}
-	pthread_mutex_unlock(ph->print);
-}
-
-/*!
- * @brief checks the value of the end, return 1 if a philo died
- * @param ph pointer to s_philo
- * @return
- */
-int	check_end(t_philo *ph)
-{
-	pthread_mutex_lock(ph->death);
-	if (*ph->the_end == 1)
-	{
-		pthread_mutex_unlock(ph->death);
-		return (1);
-	}
-	pthread_mutex_unlock(ph->death);
-	return (0);
 }

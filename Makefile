@@ -6,7 +6,7 @@
 #    By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/03 18:55:31 by lfai              #+#    #+#              #
-#    Updated: 2023/07/12 16:47:06 by lfai             ###   ########.fr        #
+#    Updated: 2023/08/07 17:21:17 by lfai             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,11 +18,11 @@ RESET			= \033[0m
 BOLD			= \033[1m
 CLEAR			= \r\033[K
 
-NAME			= philo
+NAME			= philosophers
 
 SRC_DIR			= src/
 
-SRCS			= main.c monitoring.c utils.c init.c
+SRCS			= main.c monitoring.c utils.c init.c philo_utils.c
 
 OBJ_DIR			= ./objs/
 OBJS			= ${addprefix ${OBJ_DIR}, ${SRCS:.c=.o}}

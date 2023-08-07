@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 15:35:32 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/19 15:53:09 by lfai             ###   ########.fr       */
+/*   Updated: 2023/08/07 17:03:44 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	init_philos(t_monitor *monitor)
 		monitor->philo[i].time_to_sleep = monitor->time_to_sleep;
 		monitor->philo[i].time_start = monitor->time_start;
 		monitor->philo[i].utime_start = monitor->utime_start;
-		monitor->philo[i].last_meal = get_time(&monitor->philo[i]);
+		monitor->philo[i].last_meal = ft_get_time(&monitor->philo[i]);
 		monitor->philo[i].the_end = &monitor->the_end;
 		monitor->philo[i].death = &monitor->death;
 		monitor->philo[i].print = &monitor->print;
@@ -88,8 +88,8 @@ void	init_philos(t_monitor *monitor)
 }
 
 /*!
- * @brief ft used to init the forks, each philo has 2 forks,
- * one at left and one at right which is neighbour's fork
+ * @brief ft used to init the forks, it ensures that each philosopher
+ * can access the appropriate forks
  * @param monitor
  * @return
  */

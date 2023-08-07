@@ -6,7 +6,7 @@
 /*   By: lfai <lfai@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/26 14:34:18 by lfai              #+#    #+#             */
-/*   Updated: 2023/07/28 16:20:11 by lfai             ###   ########.fr       */
+/*   Updated: 2023/08/07 17:05:41 by lfai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void			init_thread(t_monitor *monitor);
 int				init_forks(t_monitor *monitor);
 void			init_philos(t_monitor *monitor);
 t_monitor		*init_monitor(char **argv);
-unsigned long	get_time(t_philo *ph);
+unsigned long	ft_get_time(t_philo *ph);
 void			*check_monitor(char **argv, t_monitor *monitor);
 void			mutex_printer(t_philo *ph, char c);
 void			accurate_sleep(t_philo *ph, int tm);
@@ -103,5 +103,7 @@ int				check_end(t_philo *ph);
 int				check_full_philos(t_philo *ph);
 void			clear_monitor(t_monitor *monitor);
 void			clear_all(t_monitor *monitor);
+int				ft_isdigit(int c);
+int				ft_checkarg(char **argv);
 
 #endif
